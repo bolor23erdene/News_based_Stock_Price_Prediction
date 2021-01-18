@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.ERROR)
 from collections import defaultdict
 
 
-dataset = pd.read_csv('data/AAPL_prepared.csv')
+dataset = pd.read_csv('./data/datasets_joined.csv')
 print(dataset)
 
 
@@ -41,14 +41,15 @@ MAX_LEN = 100
 
 
 ### DATA ### 
+
 def to_sentiment(rating):
   rating = int(rating)
   if rating < 0:
-    return -1
-  elif rating == 0:
-    return 0
+    return 0 # negative
+  elif rating == 1:
+    return 1 # positive
   else:
-    return 1
+    return 2 # neutral
 
 
 dataset['labels'] = dataset.labels.apply(to_sentiment)
@@ -65,6 +66,7 @@ PRE_TRAINED_MODEL_NAME = 'bert-base-cased'
 tokenizer = BertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
 
 sample_txt = 'When was I last outside? I am stuck at home for 2 weeks.'
+
 """
 tokens = tokenizer.tokenize(sample_txt)
 token_ids = tokenizer.convert_tokens_to_ids(tokens)
@@ -130,6 +132,14 @@ df_val, df_test = train_test_split(
 )
 
 print(df_train.shape, df_val.shape, df_test.shape)
+print(df_train.head)
+print(df_val.head)
+print(df_test.head)
+
+print(len(df_train),'df_train length')
+
+import collections
+print(collections.Counter(dataset.labels.to_numpy()),"LABELS")
 
 
 
@@ -221,6 +231,7 @@ def train_epoch(
       attention_mask=attention_mask
     )
     _, preds = torch.max(outputs, dim=1)
+    print(outputs.shape,targets.shape, "OUTPUTS AND TARGETS SHAPES")
     loss = loss_fn(outputs, targets)
     correct_predictions += torch.sum(preds == targets)
     losses.append(loss.item())
@@ -246,6 +257,7 @@ def eval_model(model, data_loader, loss_fn, device, n_examples):
       )
       _, preds = torch.max(outputs, dim=1)
       loss = loss_fn(outputs, targets)
+      print(outputs.shape,targets.shape, "OUTPUTS AND TARGETS SHAPES")
       correct_predictions += torch.sum(preds == targets)
       losses.append(loss.item())
   return correct_predictions.double() / n_examples, np.mean(losses)
