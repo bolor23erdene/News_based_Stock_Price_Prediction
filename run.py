@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.ERROR)
 from collections import defaultdict
 
 
-dataset = pd.read_csv('dataset_prepared.csv')
+dataset = pd.read_csv('data/AAPL_prepared.csv')
 print(dataset)
 
 
@@ -188,7 +188,7 @@ model = model.to(device)
 
 
 
-EPOCHS = 10
+EPOCHS = 1
 optimizer = AdamW(model.parameters(), lr=2e-5, correct_bias=False)
 total_steps = len(train_data_loader) * EPOCHS
 scheduler = get_linear_schedule_with_warmup(

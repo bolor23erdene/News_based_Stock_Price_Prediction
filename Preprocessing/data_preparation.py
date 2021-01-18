@@ -11,16 +11,20 @@ from sqlalchemy import create_engine
 from pandas.io import sql
 
 
-companies = ['TSLA','AAPL']
+
+### configs ### 
+
+companies = ['EBAY']
 
 user = 'root'
 passw = 'B@ldoo2019'
 host =  '127.0.0.1'
 port = 3306
 database = 'news_final'
-price_api_key ='DT6D1EPIQZ7YNUFD'
-stock_api_key = 'yveir74mxfkqvddwuzktzw0ufuywagebyizcbtmq'
-#
+price_api_key ='RDJGGT2IBZO1891D'
+stock_api_key = 'uwleibwkfzddwxgmbbmal41bkawkbtqjtk1gakmp'
+
+### creating df of alpha ### 
 
 for company_name in companies:
 
@@ -124,7 +128,7 @@ for company_name in companies:
     
     page_size = 50
     page = 1
-    name = 'TSLA'
+    name = 'EBAY'
 
     def returnPages(api_key, page_size, page, name):
 
@@ -164,13 +168,14 @@ for company_name in companies:
     #page_number = 1000
 
     x, page = returnPages(stock_api_key, page_size, page, name)
-    page = 40
+    #page = 40
+    page = 10
     final = []
 
     while page > 0:
-        x, _ = returnPages(stock_api_key, page_size, page, name)
-        final = final + x
-        page = page - 1
+    	x, _ = returnPages(stock_api_key, page_size, page, name)
+    	final = final + x
+    	page = page - 1
 
     print(final)
     print(len(final))
@@ -182,7 +187,7 @@ for company_name in companies:
 
     #df.to_csv(company_name+'_file.csv')
     df = df.drop(['topics','tickers'],axis=1)
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = pd.to_datetime(df['date'],utc=True)
     print(pd.to_datetime(df['date']).iloc[0])
 
 
